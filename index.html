@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="style.css">
+
+<title>BOOTING...</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background: #000;
+    color: #fff;
+    overflow: hidden;
+
+    font-family:
+        "VCR OSD Mono",
+        monospace;
+}
+
+body {
+    font-size: 14px;
+}
+
+/* =========================
+   MAIN TERMINAL
+========================= */
+
+#terminal {
+    position: fixed;
+    inset: 0;
+
+    padding: 24px 28px;
+
+    background: #000;
+
+    overflow: hidden;
+}
+
+#boot {
+    white-space: pre-wrap;
+    line-height: 1.3;
+}
+
+.line {
+    min-height: 18px;
+}
+
+.dim {
+    color: #888;
+}
+
+.bright {
+    color: #fff;
+}
+
+/* =========================
+   FINAL TERMINAL
+========================= */
+
+#finalScreen {
+    display: none;
+
+    position: absolute;
+    left: 28px;
+    top: 24px;
+
+    background: #000;
+
+    opacity: 0;
+}
+
+#finalScreen.show {
+    opacity: 1;
+}
+
+/* =========================
+   ASCII TITLE
+========================= */
+
+#logo {
+    margin: 0 0 22px 0;
+
+    padding: 0;
+
+    color: #fff;
+
+    font-family: inherit;
+
+    font-size: clamp(7px, 1vw, 14px);
+    line-height: 1;
+
+    white-space: pre;
+}
+
+/* =========================
+   LOGIN
+========================= */
+
+#login {
+    margin-top: 5px;
+}
+
+.inputLine {
+    display: flex;
+    align-items: center;
+
+    height: 28px;
+}
+
+.label {
+    display: inline-block;
+    width: 100px;
+
+    color: #fff;
+}
+
+input {
+    width: 250px;
+
+    border: none;
+    outline: none;
+
+    padding: 0;
+
+    background: #000;
+    color: #fff;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    caret-color: #fff;
+}
+
+button {
+    margin-top: 15px;
+
+    padding: 6px 16px;
+
+    border: 1px solid #fff;
+
+    background: #000;
+    color: #fff;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+button:hover {
+    background: #fff;
+    color: #000;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+#status {
+    height: 20px;
+
+    margin-top: 15px;
+
+    color: #888;
+}
+
+/* =========================
+   DESKTOP TRANSITION
+========================= */
+
+#transition {
+    position: fixed;
+    inset: 0;
+
+    z-index: 100;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    background: #000;
+    color: #fff;
+
+    font-family: inherit;
+
+    font-size: 14px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 700px) {
+    #terminal {
+        padding: 15px;
+    }
+
+    #finalScreen {
+        left: 15px;
+        top: 15px;
+    }
+
+    body,
+    input,
+    button {
+        font-size: 11px;
+    }
+
+    .label {
+        width: 80px;
+    }
+
+    input {
+        width: 180px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="terminal">
+
+    <div id="boot"></div>
+
+    <div id="finalScreen">
+
+<pre id="logo">
+░▒█▀▀█░█▀▀▄░▄▀▀▄░█▀▄░█▀▀▄░█▀▀▄░█▀▀░▀█▀░░▀░░█▀▀▄░█▀▀▄░▀█▀░░▀░░▄▀▀▄░█▀▀▄░░░▒█▀▀▀█░▒█▀▀▀█
+░▒█▄▄█░█▄▄▀░█░░█░█░░░█▄▄▀░█▄▄█░▀▀▄░░█░░░█▀░█░▒█░█▄▄█░░█░░░█▀░█░░█░█░▒█░░░▒█░░▒█░░▀▀▀▄▄
+░▒█░░░░▀░▀▀░░▀▀░░▀▀▀░▀░▀▀░▀░░▀░▀▀▀░░▀░░▀▀▀░▀░░▀░▀░░▀░░▀░░▀▀▀░░▀▀░░▀░░▀░░░▒█▄▄▄█░▒█▄▄▄█
+</pre>
+<br>
+<pre style="font-family: monospace; white-space: pre; line-height: 1.1; font-size: 8px; letter-spacing: 0px;">
+        :@@@@@@@@@@=                                                          
+      *@@@@*:...=@@@@%                                                        
+     @@@*          =@@@:                                                      
+    @@@:     @@%     @@@.                                                     
+   =@@=      @@@     .@@%                 :@@@@@@@@@@@=.                      
+   *@@      %@@@      @@@               :@@@@@@@@@@@@@@  %@@@@@:              
+   =@@-   -@@@+       @@%               @@@@@@@@@@@@@= @@@@@@@@@@:            
+    @@@.             %@@.              +@@@@@@@@@@@@% @@@@@@@@@@@@            
+     @@@-          :@@@:               -@@@@@@@@:=%@-:@@@@@@@@@@@@*           
+      %@@@@.     #@@@@                  @@@@@@@@@:    @@@@@@@@@@@@. *         
+        =@@@@@@@@@@*                    :@@@@@@@@@*   :@@@@@@@@@@* *@@        
+             ..                          :@@@@@@@@@@    +@@@@@@* .@@@@@:      
+                         =@@@@*           .@@@@@@@@@@@@@.     .*@@@@@@@@:     
+                        @@@@@@@@@           %@@@@@@@@@@@@-     -@@@@@@@@@     
+                       @@@@@@@@@@@@          :@@@@@@@@@@@@@@@%=..@@@@@@@@-    
+                      @@@@@@@@@@@@@@@.      =@@@@@@@@@@@@@@@@@@@@@@@@@@@@=    
+                     #@@@@@@@@@@@@@@@@@.   %@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     
+                    =@@@@@@@@@@@@@@@@@@@@.@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@.     
+                   -@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  .=@@@@@@@@@@@@.       
+                   @@@@@@@@@@=#@@@@@@@@@@@@@@@@@@@@@@                         
+                  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*                          
+                 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@.                           
+                #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                             
+               =@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#                              
+              :@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%=     @@@@@@@@@@@@@@@@@@@@:      
+             .@@@@@@@@@@@@@@@@@:                   *%%%%%%%%%%%%%%%%%%%       
+           %@@@@@@@@@@@@@@@@=   @@@@@@@:                                      
+        =@@@@@@@@@@@@@@@@%.    %@@%*#@@@@#%%%*.   *@@@@@@@@@@@@@@@@@@@@:      
+      .@@@@@@@@@@@@@@@@:      :@@#     +@@@@@@@@@.  *#################*       
+      @@@@@@@@@@@@@@=         %@@      @@@    :@@@:                           
+      @@@@@@@@@@@%           :@@+     =@@-     *@@.  @@@@@@@@@@@@@@@@@@:      
+       %@@@@@@@:             @@@@@@@@%@@@     .@@#  +*****************=       
+         :==.                 -   .*@@@@@@@@* %@@                             
+                                     *@%%%@@@@@@*                             
+                                            .@@@
+</pre>
+
+        <form id="login">
+
+            <div class="inputLine">
+                <span class="label">USER:</span>
+                <input
+                    id="username"
+                    type="text"
+                    autocomplete="off"
+                    spellcheck="false"
+                >
+            </div>
+
+            <div class="inputLine">
+                <span class="label">PASSWORD:</span>
+                <input
+                    id="password"
+                    type="password"
+                    autocomplete="off"
+                >
+            </div>
+
+            <button type="submit">START</button>
+
+            <div id="status"></div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div id="transition">
+    STARTING PROCRASTINATIONOS...
+</div>
+
+<script>
+
+/* ========================================
+   ELEMENTS
+======================================== */
+
+const boot =
+    document.getElementById("boot");
+
+const finalScreen =
+    document.getElementById("finalScreen");
+
+const login =
+    document.getElementById("login");
+
+const username =
+    document.getElementById("username");
+
+const password =
+    document.getElementById("password");
+
+const status =
+    document.getElementById("status");
+
+const transition =
+    document.getElementById("transition");
+
+
+/* ========================================
+   BOOT TEXT
+======================================== */
+
+const bootLines = [
+
+    "ProcrastinationOS Bootloader v1.0",
+    "",
+    "Initializing system...",
+    "Loading kernel image...",
+    "Verifying kernel checksum... OK",
+    "Initializing memory manager...",
+    "Memory test: 16384 MB OK",
+    "Mapping virtual address space...",
+    "Starting scheduler...",
+    "CPU0 online",
+    "CPU1 online",
+    "CPU2 online",
+    "CPU3 online",
+    "Initializing interrupt controller...",
+    "Mounting root filesystem...",
+    "Filesystem clean.",
+    "Loading device manager...",
+    "Scanning system devices...",
+    "Graphics adapter detected.",
+    "Initializing display interface...",
+    "Keyboard detected.",
+    "Pointer device detected.",
+    "Audio subsystem initialized.",
+    "Starting network services...",
+    "Network interface online.",
+    "Initializing system clock...",
+    "Loading system configuration...",
+    "Configuration verified.",
+    "Starting process manager...",
+    "Starting task scheduler...",
+    "Loading terminal subsystem...",
+    "Registering TTY0...",
+    "Registering TTY1...",
+    "Loading user environment...",
+    "Checking procrastination index...",
+    "Procrastination index: 99.8%",
+    "Loading unnecessary processes...",
+    "Starting distraction.service...",
+    "Skipping productivity.service...",
+    "Loading desktop manager...",
+    "Preparing desktop environment...",
+    "Starting login service...",
+    "",
+    "System ready."
+];
+
+
+/* ========================================
+   RANDOM TERMINAL DATA
+======================================== */
+
+function randomHex(length = 8) {
+
+    const characters =
+        "0123456789ABCDEF";
+
+    let result = "";
+
+    for (let i = 0; i < length; i++) {
+
+        result +=
+            characters[
+                Math.floor(
+                    Math.random() *
+                    characters.length
+                )
+            ];
+
+    }
+
+    return result;
+}
+
+
+function randomSystemLine() {
+
+    const messages = [
+
+        () =>
+            "MEM 0x" +
+            randomHex() +
+            " -> 0x" +
+            randomHex(),
+
+        () =>
+            "PROC PID " +
+            Math.floor(
+                100 +
+                Math.random() * 8000
+            ) +
+            " READY",
+
+        () =>
+            "BLOCK " +
+            randomHex(6) +
+            " VERIFIED",
+
+        () =>
+            "DEVICE " +
+            Math.floor(
+                Math.random() * 32
+            ) +
+            " REGISTERED",
+
+        () =>
+            "MODULE_" +
+            randomHex(4) +
+            " LOADED"
+
+    ];
+
+    return messages[
+        Math.floor(
+            Math.random() *
+            messages.length
+        )
+    ]();
+}
+
+
+/* ========================================
+   ADD TERMINAL LINE
+======================================== */
+
+function addLine(text, className = "") {
+
+    const line =
+        document.createElement("div");
+
+    line.className =
+        "line " + className;
+
+    line.textContent = text;
+
+    boot.appendChild(line);
+
+
+    /*
+        Keep newest lines visible
+        if the boot fills the screen.
+    */
+
+    while (
+        boot.scrollHeight >
+        window.innerHeight - 40
+    ) {
+
+        if (
+            boot.firstElementChild
+        ) {
+
+            boot.removeChild(
+                boot.firstElementChild
+            );
+
+        }
+
+        else {
+
+            break;
+
+        }
+    }
+}
+
+
+/* ========================================
+   RUN BOOT
+======================================== */
+
+let index = 0;
+
+
+function runBoot() {
+
+    if (
+        index >=
+        bootLines.length
+    ) {
+
+        finishBoot();
+
+        return;
+    }
+
+
+    const current =
+        bootLines[index];
+
+
+    let className = "";
+
+
+    if (
+        current.includes("OK") ||
+        current.includes("online") ||
+        current.includes("ready")
+    ) {
+
+        className = "bright";
+
+    }
+
+
+    addLine(
+        current,
+        className
+    );
+
+
+    /*
+        Add occasional technical garbage.
+        A sacred tradition of fake OS screens.
+    */
+
+    if (
+        current !== "" &&
+        Math.random() > 0.6
+    ) {
+
+        setTimeout(
+            function() {
+
+                addLine(
+                    "  " +
+                    randomSystemLine(),
+                    "dim"
+                );
+
+            },
+            15
+        );
+
+    }
+
+
+    index++;
+
+
+    let delay =
+        25 +
+        Math.random() * 55;
+
+
+    if (index === 4) {
+        delay = 180;
+    }
+
+    if (index === 18) {
+        delay = 150;
+    }
+
+    if (index === 35) {
+        delay = 200;
+    }
+
+
+    setTimeout(
+        runBoot,
+        delay
+    );
+
+}
+
+
+/* ========================================
+   FINISH BOOT
+======================================== */
+
+function finishBoot() {
+
+    setTimeout(
+        function() {
+
+            boot.innerHTML = "";
+
+            finalScreen.style.display =
+                "block";
+
+
+            requestAnimationFrame(
+                function() {
+
+                    finalScreen.classList.add(
+                        "show"
+                    );
+
+                }
+            );
+
+
+            setTimeout(
+                function() {
+
+                    username.focus();
+
+                },
+                100
+            );
+
+        },
+        500
+    );
+
+}
+
+
+/* ========================================
+   LOGIN
+======================================== */
+
+login.addEventListener(
+    "submit",
+    function(event) {
+
+        event.preventDefault();
+
+
+        const user =
+            username.value.trim();
+
+        const pass =
+            password.value;
+
+
+        if (!user) {
+
+            status.textContent =
+                "USER REQUIRED.";
+
+            username.focus();
+
+            return;
+        }
+
+
+        if (!pass) {
+
+            status.textContent =
+                "PASSWORD REQUIRED.";
+
+            password.focus();
+
+            return;
+        }
+
+
+        username.disabled = true;
+        password.disabled = true;
+
+
+        status.textContent =
+            "AUTHENTICATING...";
+
+
+        setTimeout(
+            function() {
+
+                status.textContent =
+                    "ACCESS GRANTED.";
+
+            },
+            400
+        );
+
+
+        setTimeout(
+            function() {
+
+                status.textContent =
+                    "STARTING DESKTOP...";
+
+            },
+            800
+        );
+
+
+        setTimeout(
+            function() {
+
+                transition.style.display =
+                    "flex";
+
+            },
+            1100
+        );
+
+
+        setTimeout(
+            function() {
+
+                window.location.href =
+                    "desktop.html";
+
+            },
+            1600
+        );
+
+    }
+);
+
+
+/* ========================================
+   START SYSTEM
+======================================== */
+
+setTimeout(
+    runBoot,
+    250
+);
+
+</script>
+
+</body>
+</html>
