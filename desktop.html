@@ -151,6 +151,33 @@
                 aria-label="Resize app width and height"></div>
         </div>
     </div>
+        <div id="gdevcopywindow" class="selected"
+            style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <div id="gdevcopywindowheader" class="windowbar">
+                <img src="https://images.vexels.com/media/users/3/140003/isolated/preview/960816ac80434d43526b1968ffa415e3-contact-form-icon.png" alt="gdev copy logo"
+                    style="width: 25px; height: auto; float: left; margin-right: 0px; padding: 10px;">
+                <p><b>Feedback</b></p>
+                <div class="close">
+                    <button type="button" class="close-button" onclick="closeGdevCopy()">×</button>
+                </div>
+            </div>
+            <div class="gdev-content">
+                <iframe title="gdev copy app" src="https://go.forms.app/form/6ab3fdee6069956354c34a18"
+                    style="width: 100%; height: 100%; border: none;"></iframe>
+                <div class="resize-handle resize-width"
+                    onpointerdown="startWindowResize(event, 'width', 'gdevcopywindow')"
+                    aria-label="Resize gdev copy width"></div>
+                <div class="resize-handle resize-left"
+                    onpointerdown="startWindowResize(event, 'left', 'gdevcopywindow')"
+                    aria-label="Resize gdev copy left edge"></div>
+                <div class="resize-handle resize-height"
+                    onpointerdown="startWindowResize(event, 'height', 'gdevcopywindow')"
+                    aria-label="Resize gdev copy height"></div>
+                <div class="resize-handle resize-corner"
+                    onpointerdown="startWindowResize(event, 'both', 'gdevcopywindow')"
+                    aria-label="Resize gdev copy width and height"></div>
+            </div>
+        </div>
     <div class="app">
         <button onclick="openNotes(); handleIconTap(this)" class="menubtn" aria-label="Open ProNotes">
             <div class="app-icon">
@@ -167,6 +194,15 @@
                 <img src="dev.jpg" alt=""
                     style="width: 64px; height: 64px; box-shadow: 0 0 8px black; margin-bottom: 0px;">
                 <p style="font-weight: bold; font-size: 12px; text-shadow: rgba(255,255,255,1) 0px 0px 3px; margin: 0px; color: #fff; color: black;">gdev</p>
+        </button>
+    </div>
+    <div class="app">
+        <button onclick="openGdevCopy(); handleIconTap(this)" class="menubtn" aria-label="Open gdev copy">
+            <div class="app-icon">
+                <img src="https://images.vexels.com/media/users/3/140003/isolated/preview/960816ac80434d43526b1968ffa415e3-contact-form-icon.png" alt=""
+                    style="width: 64px; height: 64px; box-shadow: 0 0 8px black; margin-bottom: 0px;">
+                <p style="font-weight: bold; font-size: 12px; text-shadow: rgba(255,255,255,1) 0px 0px 3px; margin: 0px; color: #fff; color: black;">Feedback</p>
+            </div>
         </button>
     </div>
     <div class="taskbar">
