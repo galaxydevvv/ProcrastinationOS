@@ -104,12 +104,14 @@ a {
   overflow: auto;
   padding: 0 20px 20px;
 }
-#gdevwindow {
+#gdevwindow,
+#gdevcopywindow {
   width: 540px;
   min-width: 300px;
   max-width: 90vw;
 }
-#gdevwindow .windowbar {
+#gdevwindow .windowbar,
+#gdevcopywindow .windowbar {
   width: 100%;
   box-sizing: border-box;
   height: 44px;
