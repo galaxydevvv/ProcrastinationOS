@@ -1,0 +1,311 @@
+@font-face {
+  font-family: 'VCR OSD Mono'; 
+    src: url('VCR_OSD_MONO_1.001.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Gent'; 
+    src: url('Gent.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+body {
+  background-image: url('wallpaper.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
+  overflow: hidden;
+  height: 100%;
+  font-family: 'calibri', monospace;
+}
+
+a {
+  color: #fff;
+  text-decoration: none;
+  text-shadow: 0 0 5px #0000EE, 0 0 10px #0000EE, 0 0 20px #0000EE, 0 0 40px #0000EE;
+}
+.taskbar {
+  color: #efefef;
+  font-size: 11px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  z-index: 1000;
+  background: rgba(5, 5, 5, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  position: relative;
+}
+
+.onboarding {
+  font-size: 24px;
+  color: #e7e7e7;
+  box-shadow:  0 0px 25px rgba(0, 0, 0, 0.5);
+  width: 500px;
+  height: fit-content;
+  padding: 20px;
+  text-align: left;
+  background-color: #2f3031;
+  border: 2mm ridge #181818;
+  border-top: none;
+  align-items: top;
+}
+
+.windowbar {
+  background-color: #232222;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  color: #d7d7d7;
+  font-size: 10px;
+  width: 540px;
+  height: 30px;
+  text-align: left;
+  border: 2mm ridge #181818;
+}
+#noteswindow {
+  width: 540px;
+  min-width: 300px;
+  max-width: 90vw;
+}
+#noteswindow .windowbar {
+  width: 100%;
+  box-sizing: border-box;
+  height: 44px;
+}
+#noteswindow .onboarding {
+  width: 540px;
+  height: 300px;
+  min-width: 300px;
+  min-height: 180px;
+  max-width: 90vw;
+  max-height: calc(100vh - 80px);
+  box-sizing: border-box;
+  position: relative;
+  overflow: auto;
+  padding: 0 20px 20px;
+}
+.notes-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  overflow-x: auto;
+  margin: 0 -20px 10px;
+  padding: 0 4px;
+  background: #202020;
+  border-bottom: 2px solid #181818;
+}
+.note-tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px 4px;
+  border: 1px solid #555;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  background: #2a2a2a;
+  color: white;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.note-tab.active {
+  background: #555;
+  color: #fff;
+}
+.note-tab button {
+  margin: 0;
+  padding: 0 2px;
+  border: none;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+}
+.new-note-tab {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 2px 8px 3px;
+  border: 1px solid #555;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  background: #2a2a2a;
+  color: white;
+  cursor: pointer;
+  font-size: 15px;
+}
+#noteText {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: white;
+  font-family: inherit;
+  padding: 4px 0;
+  height: 230px;
+  resize: none;
+  line-height: 1.45;
+}
+.note-editor,
+.note-guide {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 2px;
+}
+.note-guide {
+  display: none;
+  color: #e7e7e7;
+  line-height: 1.45;
+  padding-top: 6px;
+}
+.resize-handle {
+  position: absolute;
+  z-index: 2;
+  background: transparent;
+}
+.resize-width {
+  top: 0;
+  right: 0;
+  bottom: 12px;
+  width: 10px;
+  cursor: ew-resize;
+}
+.resize-left {
+  top: 0;
+  bottom: 12px;
+  left: 0;
+  width: 10px;
+  cursor: ew-resize;
+}
+.resize-height {
+  right: 12px;
+  bottom: 0;
+  left: 0;
+  height: 10px;
+  cursor: ns-resize;
+}
+.resize-corner {
+  right: 0;
+  bottom: 0;
+  width: 12px;
+  height: 12px;
+  cursor: nwse-resize;
+}
+.nextBtn, .prevBtn, .finishBtn {
+  background-color: #515050;
+  border: none;
+  color: #cecece;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  font-family: 'calibri', monospace;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 7px 12px;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+.nextBtn:hover, .prevBtn:hover, .finishBtn:hover {
+  color: #ffffff;
+  font-family: 'calibri', monospace;
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+button:disabled {
+  background-color: #515050;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  font-family: 'calibri', monospace;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 7px 12px;
+  border-radius: 5px;
+  margin-right: 10px;
+  color: #6e6e6e;
+  cursor: not-allowed;
+}
+.page { 
+  display: none; 
+}
+.page.active { 
+  display: block; 
+}
+.help {
+  margin-bottom: 10px;
+  gap: 10px;
+  font-family: 'Futura', monospace;
+  font-size: 25px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  border: none;
+  background: none;
+  color: #e7e7e7;
+  cursor: help;
+}
+.close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px;
+}
+.close-button {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #fff;
+  background: none;
+  height: 30px;
+  color: #e7e7e7;
+  font-size: 30px;
+  width: 40px;
+  border: none;
+  cursor: pointer;
+  border-left: 2mm ridge #181818;
+}
+.close-button:hover {
+  color: #a83d3d;
+}
+.menubtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.app-icon {
+  display: inline-block;
+  margin: 10px;
+  padding: 5px;
+  width: fit-content;
+  color: #fff;
+  text-align: center;
+  cursor: default;
+  user-select: none;
+}
+.app-icon:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+.app-icon.selected {
+  background-color: rgba(185, 185, 185, 0.25);
+  border: 2px solid rgba(165, 165, 165, 0.5);;
+  text-shadow: rgba(255,255,255,1) 0px 0px 10px; 
+}

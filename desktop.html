@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="desktop.css">
+    <script src="script.js" defer></script>
+    <title>ProcrastinationOS Onboarding</title>
+</head>
+
+<body>
+    <div id="window" class="selected"
+        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <div id="windowheader" class="windowbar">
+            <img src="icon.png" alt="ProcrastinationOS Logo"
+                style="width: 25px; height: auto; float: left; margin-right: 0px; padding: 10px; filter: invert(100%);">
+            <p><b>ProcrastinationOS Onboarding Program</b></p>
+            <div class="close">
+                <button type="button" class="close-button" onclick="finishOnboarding()">×</button>
+            </div>
+        </div>
+        <div class="onboarding">
+            <div class="page active">
+                <h1 style="font-family: 'Futura', monospace; font-size: 24px; margin-bottom: 10px;">ProcrastinationOS
+                    Onboarding</h1>
+                <hr style="border: 1.5px solid #ccc; margin-bottom: 20px;">
+                <p>Welcome to the desktop!</p>
+                <p>This simple help guide will show you around and help you get started.</p>
+                <div class="button-container" style="display: flex; justify-content: space-between; margin-top: 20px;"
+                    aria-label="Navigation buttons">
+                    <button type="button" class="prevBtn" onclick="changePage(-1)"><b>
+                            < Prev</b></button>
+                    <button type="button" class="nextBtn" onclick="changePage(1)"><b>Next ></b></button>
+                </div>
+            </div>
+            <div class="page">
+                <h1 style="font-family: 'Futura', monospace; font-size: 24px; margin-bottom: 10px;">Step 1: The Taskbar
+                </h1>
+                <hr style="border: 1.5px solid #ccc; margin-bottom: 20px;">
+                <p>This is where all of your open and pinned apps will appear.</p>
+                <p>Your clock will also be displayed here along with the date.</p>
+                <div class="button-container" style="display: flex; justify-content: space-between; margin-top: 20px;"
+                    aria-label="Navigation buttons">
+                    <button type="button" class="prevBtn" onclick="changePage(-1)"><b>
+                            < Prev</b></button>
+                    <button type="button" class="nextBtn" onclick="changePage(1)"><b>Next ></b></button>
+                </div>
+            </div>
+            <div class="page">
+                <h1 style="font-family: 'Futura', monospace; font-size: 24px; margin-bottom: 10px;">Step 2:
+                    "Productivity" Features</h1>
+                <hr style="border: 1.5px solid #ccc; margin-bottom: 20px;">
+                <p>We have tons of very important features to help you work effectively!</p>
+                <b style="font-size: 18px;">For example;</b>
+                <ul style="font-size: 16px; line-height: 1; margin-left: 20px;">
+                    <li>Doomscroll locking. This makes it so when you doomscroll it's hard to stop so you don't miss any
+                        good videos!</li>
+                    <br>
+                    <li>Focus Timer to help you stay on track, 5 minuites of work no limit of games!</li>
+                    <br>
+                    <li>While you are working little events will occur to keep you "engaged" on your work!</li>
+                    <br>
+                    <li>So much more!!</li>
+                </ul>
+                <div class="button-container" style="display: flex; justify-content: space-between; margin-top: 20px;"
+                    aria-label="Navigation buttons">
+                    <button type="button" class="prevBtn" onclick="changePage(-1)"><b>
+                            < Prev</b></button>
+                    <button type="button" class="nextBtn" onclick="changePage(1)"><b>Next ></b></button>
+                </div>
+            </div>
+            <div class="page">
+                <audio id="help" src="https://galaxydevvv.github.io/ProcrastinationOS/help.mp3"></audio>
+                <div style="display: flex; align-items: baseline; gap: 10px;">
+                    <h1
+                        style="display: flex; line-height: 1; align-items: center; gap: 10px; font-family: 'Futura', monospace; font-size: 25px; margin-bottom: 0px;">
+                        Step 3: <button class="help" id="beatle!">Help!</button></h1>
+                </div>
+                <hr style="border: 1.5px solid #ccc; margin-bottom: 20px;">
+                <p>If you have any questions or need assistance, please don't hesitate to ask!</p>
+                <a href="mailto:galaxydev13@gmail.com">Email: galaxydev13yt@gmail.com</a>
+                <div class="button-container" style="display: flex; justify-content: space-between; margin-top: 20px;"
+                    aria-label="Navigation buttons">
+                    <button type="button" class="prevBtn" onclick="changePage(-1)"><b>
+                            < Prev</b></button>
+                    <button type="button" class="nextBtn" onclick="changePage(1)"><b>Next ></b></button>
+                </div>
+            </div>
+            <div class="page">
+                <h1 style="font-family: 'Futura', monospace; font-size: 24px; margin-bottom: 10px;">Step 4: Enjoy!</h1>
+                <hr style="border: 1.5px solid #ccc; margin-bottom: 20px;">
+                <p>We hope you enjoy your time using ProcrastinationOS!</p>
+                <p>and remember to stay productive! ;)</p>
+                <div class="button-container" style="display: flex; justify-content: space-between; margin-top: 20px;"
+                    aria-label="Navigation buttons">
+                    <button type="button" class="prevBtn" onclick="changePage(-1)"><b>
+                            < Prev</b></button>
+                    <button type="button" class="finishBtn" onclick="finishOnboarding()"><b>Finish</b></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="noteswindow" class="selected"
+        style=" display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <div id="noteswindowheader" class="windowbar">
+            <img src="notepad.png" alt="ProcrastinationOS Logo"
+                style="width: 25px; height: auto; float: left; margin-right: 0px; padding: 10px;">
+            <p><b>ProNotes v1.0.1</b></p>
+            <div class="close">
+                <button type="button" class="close-button" onclick="closenotes()">×</button>
+            </div>
+        </div>
+        <div class="onboarding notes-content">
+            <div class="notes-tabs" id="notesTabs"></div>
+
+            <div id="noteGuide" class="note-guide" aria-live="polite"></div>
+            <div id="noteEditor" class="note-editor">
+                <textarea id="noteText" placeholder="Write your note..." aria-label="Write your note"></textarea>
+                <div id="notePreview" class="note-preview" aria-live="polite"></div>
+            </div>
+
+            <div class="resize-handle resize-width" onpointerdown="startNotesResize(event, 'width')"
+                aria-label="Resize app width"></div>
+            <div class="resize-handle resize-left" onpointerdown="startNotesResize(event, 'left')"
+                aria-label="Resize app left edge"></div>
+            <div class="resize-handle resize-height" onpointerdown="startNotesResize(event, 'height')"
+                aria-label="Resize app height"></div>
+            <div class="resize-handle resize-corner" onpointerdown="startNotesResize(event, 'both')"
+                aria-label="Resize app width and height"></div>
+        </div>
+    </div>
+    <div id="gdevwindow" class="selected"
+        style=" display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <div id="gdevwindowheader" class="windowbar">
+            <img src="dev.jpg" alt="gdev logo"
+                style="width: 25px; height: auto; float: left; margin-right: 0px; padding: 10px;">
+            <p><b>gdevs hangout</b></p>
+            <div class="close">
+                <button type="button" class="close-button" onclick="closeGdev()">×</button>
+            </div>
+        </div>
+        <div class="gdev-content">
+            <iframe src="https://galaxydevvv.github.io/gdev/" style="width: 100%; height: 100%; border: none;"></iframe>
+            <div class="resize-handle resize-width" onpointerdown="startWindowResize(event, 'width', 'gdevwindow')"
+                aria-label="Resize app width"></div>
+            <div class="resize-handle resize-left" onpointerdown="startWindowResize(event, 'left', 'gdevwindow')"
+                aria-label="Resize app left edge"></div>
+            <div class="resize-handle resize-height" onpointerdown="startWindowResize(event, 'height', 'gdevwindow')"
+                aria-label="Resize app height"></div>
+            <div class="resize-handle resize-corner" onpointerdown="startWindowResize(event, 'both', 'gdevwindow')"
+                aria-label="Resize app width and height"></div>
+        </div>
+    </div>
+    <div id="app">
+        <button onclick="openNotes()" class="menubtn">
+            <div class="app-icon" role="button" tabindex="0" onclick="handleIconTap(this)"
+                onkeydown="handleIconKeydown(event, this)" aria-label="ProNotes app">
+                <img src="notepad.png" alt=""
+                    style="width: 64px; height: 64px; box-shadow: 0 0 8px black; margin-bottom: 0px;">
+                <p
+                    style="font-weight: bold; font-size: 12px; text-shadow: rgba(255,255,255,1) 0px 0px 3px; margin: 0px; color: #fff; color: black;">
+                    ProNotes</p>
+        </button>
+    </div>
+    <div id="app">
+        <button onclick="openGdev()" class="menubtn">
+            <div class="app-icon" role="button" tabindex="0" onclick="handleIconTap(this)"
+                onkeydown="handleIconKeydown(event, this)" aria-label="gdev app">
+                <img src="dev.jpg" alt=""
+                    style="width: 64px; height: 64px; box-shadow: 0 0 8px black; margin-bottom: 0px;">
+                <p style="font-weight: bold; font-size: 12px; text-shadow: rgba(255,255,255,1) 0px 0px 3px; margin: 0px; color: #fff; color: black;">gdev</p>
+        </button>
+    </div>
+    </div>
+    <div class="taskbar">
+        <button onclick="startOnboarding()" class="menubtn"><img src="icon.png" alt="ProcrastinationOS Logo"
+                style="width: 25px; height: auto; float: left; margin-left: -25px; padding: 10px; filter: invert(100%);"></button>
+        <p id="timeElement">
+            Loading date/time...
+        </p>
+    </div>
+</body>
+
+</html>
