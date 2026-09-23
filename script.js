@@ -4,7 +4,7 @@ setInterval(function () {
 }, 1000);
 // page switching
 let current = 0;
-function changePage(direction)a {
+function changePage(direction) {
   const pages = document.querySelectorAll('#window .page');
 
   pages[current].classList.remove('active');
@@ -13,9 +13,16 @@ function changePage(direction)a {
   updateNavigation();
 }
 function updateNavigation() {
-  const activePage = document.querySelector('.page.active');
+  const activePage = document.querySelector('#window .page.active');
 
-  activePage.querySelector('.prevBtn').disabled = current === 0;
+  if (!activePage) {
+    return;
+  }
+
+  const previousButton = activePage.querySelector('.prevBtn');
+  if (previousButton) {
+    previousButton.disabled = current === 0;
+  }
   const nextButton = activePage.querySelector('.nextBtn');
 
   if (nextButton) {
@@ -26,6 +33,10 @@ function updateNavigation() {
 let highestWindowLayer = 1;
 
 function bringToFront(element) {
+  if (!element) {
+    return;
+  }
+
   highestWindowLayer += 1;
   element.style.zIndex = highestWindowLayer;
 }
@@ -94,19 +105,22 @@ function dragElement(element) {
 let clickCount = 0;
 const button = document.getElementById('beatle!');
 const audio = document.getElementById('help');
-audio.volume = 0.2; 
 
-button.addEventListener('click', () => {
-  clickCount += 1;
+if (button && audio) {
+  audio.volume = 0.2;
 
-  if (clickCount >= 5) {
-    clickCount = 0;
-    audio.currentTime = 0;
-    audio.play().catch((error) => {
-      console.error('Unable to play help.mp3:', error);
-    });
-  }
-});
+  button.addEventListener('click', () => {
+    clickCount += 1;
+
+    if (clickCount >= 5) {
+      clickCount = 0;
+      audio.currentTime = 0;
+      audio.play().catch((error) => {
+        console.error('Unable to play help.mp3:', error);
+      });
+    }
+  });
+}
 // icon click
 let selectedIcon = null;
 
@@ -173,8 +187,7 @@ function dragElement(element) {
     document.onmousemove = null;
   }
 }
-// gdev window dragging
-dragElement(document.getElementById("gdevwindow"));
+  dragElement(document.getElementById("gdevwindow"));
 // close & open notes window
 function closenotes() {
   document.getElementById("noteswindow").style.display = "none";
@@ -198,7 +211,6 @@ function openNotes() {
 
 }
 
-// open & close gdev window
 function closeGdev() {
   document.getElementById("gdevwindow").style.display = "none";
 }
@@ -213,9 +225,17 @@ function openGdev() {
   gdevWindow.style.transform = "translate(-50%, -50%)";
 }
 
+function createNoteId() {
+  if (window.crypto && typeof window.crypto.randomUUID === "function") {
+    return window.crypto.randomUUID();
+  }
+
+  return `note-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
 let notes = [
   {
-    id: crypto.randomUUID(),
+    id: createNoteId(),
     title: "Info",
     text: "Pronotes v1.0.2 To start click the plus at the top of your screen to create a new note then just type your notes autosave!"
   }
@@ -289,7 +309,7 @@ function createNote() {
   saveCurrentNote();
 
   const newNote = {
-    id: crypto.randomUUID(),
+    id: createNoteId(),
     title: "Untitled note",
     text: ""
   };
@@ -333,11 +353,22 @@ function saveCurrentNote() {
 }
 
 function saveNotes() {
-  localStorage.setItem("proNotes", JSON.stringify(notes));
+  try {
+    localStorage.setItem("proNotes", JSON.stringify(notes));
+  } catch (error) {
+    console.error("Could not save ProNotes:", error);
+  }
 }
 
 function loadNotes() {
-  const savedNotes = localStorage.getItem("proNotes");
+  let savedNotes;
+
+  try {
+    savedNotes = localStorage.getItem("proNotes");
+  } catch (error) {
+    console.error("Could not access ProNotes localStorage:", error);
+    return;
+  }
 
   if (!savedNotes) {
     return;
@@ -346,8 +377,16 @@ function loadNotes() {
   try {
     const parsedNotes = JSON.parse(savedNotes);
 
-    if (Array.isArray(parsedNotes) && parsedNotes.length > 0) {
-      notes = parsedNotes;
+    const validNotes = Array.isArray(parsedNotes)
+      ? parsedNotes.filter((note) => note && note.id && typeof note.text === "string")
+      : [];
+
+    if (validNotes.length > 0) {
+      notes = validNotes.map((note) => ({
+        id: String(note.id),
+        title: note.title === "Info" ? "Info" : String(note.title || "Untitled note"),
+        text: note.text
+      }));
       activeNoteId = notes[0].id;
     }
   } catch (error) {
@@ -363,6 +402,8 @@ if (noteTextInput) {
   loadActiveNote();
   renderNotesTabs();
 }
+
+updateNavigation();
 
 const notesContent = document.querySelector("#noteswindow .onboarding");
 const notesWindow = document.getElementById("noteswindow");
@@ -394,6 +435,10 @@ function startWindowResize(event, axis, windowId) {
   event.stopPropagation();
 
   const windowElement = document.getElementById(windowId);
+  if (!windowElement) {
+    return;
+  }
+
   const content = windowElement.querySelector(".onboarding, .gdev-content") || windowElement;
   const windowBounds = windowElement.getBoundingClientRect();
   const startX = event.clientX;
@@ -406,7 +451,8 @@ function startWindowResize(event, axis, windowId) {
   windowElement.style.left = `${startLeft}px`;
   windowElement.style.top = `${windowBounds.top}px`;
 
-  content.setPointerCapture(event.pointerId);
+  const pointerId = event.pointerId;
+  content.setPointerCapture(pointerId);
 
   function resize(resizeEvent) {
     if (axis === "width" || axis === "both") {
@@ -426,7 +472,9 @@ function startWindowResize(event, axis, windowId) {
   }
 
   function stopResize() {
-    content.releasePointerCapture(event.pointerId);
+    if (content.hasPointerCapture(pointerId)) {
+      content.releasePointerCapture(pointerId);
+    }
     content.removeEventListener("pointermove", resize);
     content.removeEventListener("pointerup", stopResize);
     content.removeEventListener("pointercancel", stopResize);
