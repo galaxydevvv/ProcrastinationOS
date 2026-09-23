@@ -6,7 +6,7 @@
 # About
 **ProcrastinationOS** is a open source webos designed for people who just need a break from all the productivity features EVERYTHING is seeming to be adding today.  
 
-![Static Badge](https://img.shields.io/badge/build_version-v1.5.4-green)
+![Static Badge](https://img.shields.io/badge/build_version-v1.5.4-red)
 
 # Credits
 - Background is from Apple Inc.
