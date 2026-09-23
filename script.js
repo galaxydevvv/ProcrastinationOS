@@ -41,7 +41,7 @@ function bringToFront(element) {
   element.style.zIndex = highestWindowLayer;
 }
 
-document.querySelectorAll("#window, #noteswindow, #gdevwindow").forEach((windowElement) => {
+document.querySelectorAll("#window, #noteswindow, #gdevwindow, #gdevcopywindow").forEach((windowElement) => {
   windowElement.addEventListener("pointerdown", () => bringToFront(windowElement));
 });
 
@@ -188,6 +188,7 @@ function dragElement(element) {
   }
 }
   dragElement(document.getElementById("gdevwindow"));
+dragElement(document.getElementById("gdevcopywindow"));
 // close & open notes window
 function closenotes() {
   document.getElementById("noteswindow").style.display = "none";
@@ -223,6 +224,20 @@ function openGdev() {
   gdevWindow.style.top = "50%";
   gdevWindow.style.left = "50%";
   gdevWindow.style.transform = "translate(-50%, -50%)";
+}
+
+function closeGdevCopy() {
+  document.getElementById("gdevcopywindow").style.display = "none";
+}
+
+function openGdevCopy() {
+  const gdevCopyWindow = document.getElementById("gdevcopywindow");
+
+  bringToFront(gdevCopyWindow);
+  gdevCopyWindow.style.display = "";
+  gdevCopyWindow.style.top = "calc(50% + 30px)";
+  gdevCopyWindow.style.left = "calc(50% + 30px)";
+  gdevCopyWindow.style.transform = "translate(-50%, -50%)";
 }
 
 function createNoteId() {
@@ -409,6 +424,8 @@ const notesContent = document.querySelector("#noteswindow .onboarding");
 const notesWindow = document.getElementById("noteswindow");
 const gdevContent = document.querySelector("#gdevwindow .gdev-content");
 const gdevWindow = document.getElementById("gdevwindow");
+const gdevCopyContent = document.querySelector("#gdevcopywindow .gdev-content");
+const gdevCopyWindow = document.getElementById("gdevcopywindow");
 
 if (notesContent && notesWindow && "ResizeObserver" in window) {
   const notesResizeObserver = new ResizeObserver(() => {
@@ -424,6 +441,14 @@ if (gdevContent && gdevWindow && "ResizeObserver" in window) {
   });
 
   gdevResizeObserver.observe(gdevContent);
+}
+
+if (gdevCopyContent && gdevCopyWindow && "ResizeObserver" in window) {
+  const gdevCopyResizeObserver = new ResizeObserver(() => {
+    gdevCopyWindow.style.width = `${gdevCopyContent.offsetWidth}px`;
+  });
+
+  gdevCopyResizeObserver.observe(gdevCopyContent);
 }
 
 function startNotesResize(event, axis) {
