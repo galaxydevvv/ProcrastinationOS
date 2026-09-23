@@ -8,6 +8,7 @@
 
 ![Static Badge](https://img.shields.io/badge/build_version-v1.5.4-red)
 
+(Green=stable Orange=Unstable Red=Broken)
 # Credits
 - Background is from Apple Inc.
 - All app icons were fully designed by me (gdev)
