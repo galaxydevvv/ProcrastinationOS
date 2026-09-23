@@ -104,6 +104,30 @@ a {
   overflow: auto;
   padding: 0 20px 20px;
 }
+#gdevwindow {
+  width: 540px;
+  min-width: 300px;
+  max-width: 90vw;
+}
+#gdevwindow .windowbar {
+  width: 100%;
+  box-sizing: border-box;
+  height: 44px;
+}
+.gdev-content {
+  width: 540px;
+  height: 300px;
+  min-width: 300px;
+  min-height: 180px;
+  max-width: 90vw;
+  max-height: calc(100vh - 80px);
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  background-color: #2f3031;
+  border: 2mm ridge #181818;
+  border-top: none;
+}
 .notes-tabs {
   display: flex;
   align-items: center;
