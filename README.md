@@ -6,14 +6,11 @@
 # About
 **ProcrastinationOS** is a open source webos designed for people who just need a break from all the productivity features EVERYTHING is seeming to be adding today.  
 
-![Static Badge](https://img.shields.io/badge/build_version-v1.5.6-green)
-
-(Green=stable Orange=Unstable Red=Broken)
 # Credits
 - Background is from Apple Inc.
 - All app icons were fully designed by me (gdev)
 - Programming by me (gdev)
-- Bug fixing and troubleshooting with the help of chatgpt
+- Bug fixing and troubleshooting with the help of ai
 # Instructions
 In order to acess ProcrastinationOS you need to do one of following methods, either install locally or just go to the website.  
 

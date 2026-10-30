@@ -88,6 +88,19 @@
                 </div>
             </div>
             <div class="page">
+                <h1 class="readme-page-title">A little about ProcrastinationOS</h1>
+                <hr style="border: 1.5px solid #ccc; margin-bottom: 16px;">
+                <article id="readmeContent" class="readme-embed" aria-label="Project README" aria-busy="true">
+                    <p>Loading the project README…</p>
+                </article>
+                <div class="button-container" style="display: flex; justify-content: space-between; margin-top: 20px;"
+                    aria-label="Navigation buttons">
+                    <button type="button" class="prevBtn" onclick="changePage(-1)"><b>
+                            < Prev</b></button>
+                    <button type="button" class="nextBtn" onclick="changePage(1)"><b>Next ></b></button>
+                </div>
+            </div>
+            <div class="page">
                 <h1 style="font-family: 'Futura', monospace; font-size: 24px; margin-bottom: 10px;">Step 4: Enjoy!</h1>
                 <hr style="border: 1.5px solid #ccc; margin-bottom: 20px;">
                 <p>We hope you enjoy your time using ProcrastinationOS!</p>
@@ -178,6 +191,84 @@
                     aria-label="Resize gdev copy width and height"></div>
             </div>
         </div>
+        <div id="aiwindow" class="selected"
+            style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <div id="aiwindowheader" class="windowbar">
+                <img src="icon.png" alt=""
+                    style="width: 25px; height: auto; float: left; margin-right: 0px; padding: 10px; filter: invert(100%);">
+                <p><b>General Assistant</b></p>
+                <div class="close">
+                    <button type="button" class="close-button" onclick="closeAI()" aria-label="Close General Assistant">×</button>
+                </div>
+            </div>
+            <div class="gdev-content ai-window-content">
+                <iframe title="General Assistant" src="ai.html" class="ai-app-frame"></iframe>
+                <div class="resize-handle resize-width" onpointerdown="startWindowResize(event, 'width', 'aiwindow')"
+                    aria-label="Resize assistant width"></div>
+                <div class="resize-handle resize-left" onpointerdown="startWindowResize(event, 'left', 'aiwindow')"
+                    aria-label="Resize assistant left edge"></div>
+                <div class="resize-handle resize-height" onpointerdown="startWindowResize(event, 'height', 'aiwindow')"
+                    aria-label="Resize assistant height"></div>
+                <div class="resize-handle resize-corner" onpointerdown="startWindowResize(event, 'both', 'aiwindow')"
+                    aria-label="Resize assistant width and height"></div>
+            </div>
+        </div>
+          <div id="googlewindow" class="selected"
+            style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <div id="googlewindowheader" class="windowbar">
+                <img src="https://mojeek.com/favicon.ico" alt="Mojeek logo"
+                    style="width: 25px; height: auto; float: left; margin-right: 0px; padding: 10px;">
+                <p><b>Web Browser</b></p>
+                <div class="close">
+                    <button type="button" class="close-button" onclick="closeGoogle()">×</button>
+                </div>
+            </div>
+            <div class="gdev-content">
+                <div class="browser-shell" id="browserShell">
+                    <div class="browser-toolbar">
+                        <button type="button" class="browser-nav-button" id="browserBack" aria-label="Back" title="Back">&#8592;</button>
+                        <button type="button" class="browser-nav-button" id="browserForward" aria-label="Forward" title="Forward">&#8594;</button>
+                        <button type="button" class="browser-nav-button" id="browserReload" aria-label="Reload" title="Reload">&#8635;</button>
+                        <form class="browser-address-form" id="browserAddressForm" method="get" action="https://mojeek.com" target="browserResults">
+                            <input type="hidden" name="ved" value="1t:244952">
+                            <input type="text" id="browserAddress" name="q" placeholder="Search Mojeek or enter a URL"
+                                aria-label="Search Mojeek or enter a URL" autocomplete="off" spellcheck="false" required>
+                            <button type="submit" aria-label="Go" title="Go">&#10148;</button>
+                        </form>
+                    </div>
+                    <div class="browser-progress" id="browserProgress" aria-hidden="true">
+                        <div class="browser-progress-fill" id="browserProgressFill"></div>
+                    </div>
+                    <div class="browser-viewport">
+                        <div class="browser-home" id="browserHome">
+                            <div class="browser-home-brand" aria-label="Mojeek">Mojeek</div>
+                            <div class="mojeek-search-embed">
+                                <form class="mojeek-search-form" id="browserHomeForm" method="get" action="https://mojeek.com" target="browserResults">
+                                    <input type="hidden" name="ved" value="1t:244952">
+                                    <div class="mojeek-search-controls">
+                                        <input type="text" id="browserHomeSearch" name="q" placeholder="Search the web..." required>
+                                        <button type="submit">Search</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <iframe id="browserResults" name="browserResults" title="Browser page" class="browser-results-frame"></iframe>
+                    </div>
+                </div>
+                <div class="resize-handle resize-width"
+                    onpointerdown="startWindowResize(event, 'width', 'googlewindow')"
+                    aria-label="Resize google width"></div>
+                <div class="resize-handle resize-left"
+                    onpointerdown="startWindowResize(event, 'left', 'googlewindow')"
+                    aria-label="Resize google left edge"></div>
+                <div class="resize-handle resize-height"
+                    onpointerdown="startWindowResize(event, 'height', 'googlewindow')"
+                    aria-label="Resize google height"></div>
+                <div class="resize-handle resize-corner"
+                    onpointerdown="startWindowResize(event, 'both', 'googlewindow')"
+                    aria-label="Resize google width and height"></div>
+            </div>
+        </div>
     <div class="app">
         <button onclick="openNotes(); handleIconTap(this)" class="menubtn" aria-label="Open ProNotes">
             <div class="app-icon">
@@ -205,13 +296,32 @@
             </div>
         </button>
     </div>
+    <div class="app">
+        <button onclick="openGoogle(); handleIconTap(this)" class="menubtn" aria-label="Open web browser">
+            <div class="app-icon">
+                <img src="https://mojeek.com/favicon.ico" alt="Web browser icon"
+                    style="width: 64px; height: 64px; box-shadow: 0 0 8px black; margin-bottom: 0px;">
+                <p style="font-weight: bold; font-size: 12px; text-shadow: rgba(255,255,255,1) 0px 0px 3px; margin: 0px; color: #fff; color: black;">Browser</p>
+            </div>
+        </button>
+    </div>
+    <div class="app">
+        <button onclick="openAI(); handleIconTap(this)" class="menubtn" aria-label="Open General Assistant">
+            <div class="app-icon">
+                <img src="icon.png" alt=""
+                    style="width: 64px; height: 64px; box-shadow: 0 0 8px black; margin-bottom: 0px;">
+                <p style="font-weight: bold; font-size: 12px; text-shadow: rgba(255,255,255,1) 0px 0px 3px; margin: 0px; color: #fff; color: black;">Assistant</p>
+            </div>
+        </button>
+    </div>
     <div class="taskbar">
         <button onclick="startOnboarding()" class="menubtn"><img src="icon.png" alt="ProcrastinationOS Logo"
                 style="width: 25px; height: auto; float: left; margin-left: -25px; padding: 10px; filter: invert(100%);"></button>
-        <p id="timeElement">
-            Loading date/time...
-        </p>
+        <div class="taskbar-status">
+            <p id="temperature">Loading temperature...</p>
+            <span class="taskbar-divider" aria-hidden="true"></span>
+            <p id="timeElement">Loading date/time...</p>
+        </div>
     </div>
 </body>
-
 </html>

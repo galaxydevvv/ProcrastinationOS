@@ -48,6 +48,23 @@ a {
   padding: 0 20px;
 }
 
+.taskbar-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.taskbar-status p {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.taskbar-divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(239, 239, 239, 0.6);
+}
+
 .box {
   display: flex;
   flex-direction: column;
@@ -105,13 +122,17 @@ a {
   padding: 0 20px 20px;
 }
 #gdevwindow,
-#gdevcopywindow {
+#gdevcopywindow,
+#googlewindow,
+#aiwindow {
   width: 540px;
   min-width: 300px;
   max-width: 90vw;
 }
 #gdevwindow .windowbar,
-#gdevcopywindow .windowbar {
+#gdevcopywindow .windowbar,
+#googlewindow .windowbar,
+#aiwindow .windowbar {
   width: 100%;
   box-sizing: border-box;
   height: 44px;
@@ -129,6 +150,194 @@ a {
   background-color: #2f3031;
   border: 2mm ridge #181818;
   border-top: none;
+}
+#aiwindow {
+  width: 700px;
+  min-width: 320px;
+  max-width: 90vw;
+}
+#aiwindow .ai-window-content {
+  width: min(700px, 90vw);
+  height: min(460px, calc(100vh - 100px));
+  min-width: 320px;
+  min-height: 220px;
+}
+.ai-app-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.browser-shell {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+  font-family: Arial, sans-serif;
+}
+.browser-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 42px;
+  padding: 0 10px;
+  background: #eef0f2;
+  border-bottom: 1px solid #d8dade;
+}
+.browser-nav-button,
+.browser-address-form button {
+  display: grid;
+  place-items: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #3c4043;
+  font-size: 19px;
+  cursor: pointer;
+}
+.browser-nav-button:hover,
+.browser-address-form button:hover {
+  background: #dfe2e5;
+}
+.browser-nav-button:disabled {
+  color: #aeb2b7;
+  cursor: default;
+}
+.browser-address-form {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  padding: 0 4px 0 12px;
+  border: 1px solid #d8dade;
+  border-radius: 18px;
+  background: #fff;
+}
+.browser-address-form:focus-within {
+  border-color: #9ab7e8;
+  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.12);
+}
+.browser-address-form input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #202124;
+  font-size: 13px;
+}
+.browser-progress {
+  z-index: 1;
+  flex: 0 0 2px;
+  overflow: hidden;
+  background: transparent;
+}
+.browser-progress.is-loading {
+  background: #e8f0fe;
+}
+.browser-progress-fill {
+  width: 0;
+  height: 100%;
+  background: #4285f4;
+  transition: width 180ms ease-out;
+}
+.browser-viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background: #fff;
+}
+.browser-home {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 18px;
+  background: #fff;
+}
+.browser-home-brand {
+  color: #008373;
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1;
+}
+.mojeek-search-embed {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 10px;
+  font-family: Arial, sans-serif;
+}
+.mojeek-search-embed .mojeek-search-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mojeek-search-embed .mojeek-search-controls input {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  background: #fff;
+  color: #000;
+  font: 14px Arial, sans-serif;
+}
+.mojeek-search-embed .mojeek-search-controls button {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 10px 20px;
+  border: 0;
+  border-radius: 4px;
+  background-color: #0078d4;
+  color: #fff;
+  cursor: pointer;
+  font: bold 14px Arial, sans-serif;
+  white-space: nowrap;
+}
+.mojeek-search-embed .mojeek-search-controls button:hover {
+  background-color: #006cbe;
+}
+.browser-results-frame {
+  position: absolute;
+  inset: 0;
+  display: none;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  cursor: pointer;
+}
+.browser-shell.is-results .browser-home {
+  display: none;
+}
+.browser-shell.is-results .browser-results-frame {
+  display: block;
+}
+@media (max-width: 340px) {
+  #googlewindow,
+  #aiwindow {
+    min-width: 0;
+  }
+  #googlewindow .gdev-content,
+  #aiwindow .ai-window-content {
+    min-width: 0;
+  }
 }
 .notes-tabs {
   display: flex;
@@ -275,6 +484,102 @@ button:disabled {
 }
 .page.active { 
   display: block; 
+}
+.readme-page-title {
+  margin: 0 0 10px;
+  color: #f3f4f8;
+  font-family: 'Futura', 'calibri', monospace;
+  font-size: 24px;
+  font-weight: normal;
+}
+.readme-embed {
+  box-sizing: border-box;
+  max-height: min(310px, 42vh);
+  overflow: auto;
+  padding: 18px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 12px;
+  background:
+    radial-gradient(ellipse at top right, rgba(164, 191, 255, 0.25), transparent 55%),
+    linear-gradient(145deg, #fff 0%, #f1f3f9 100%);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.26);
+  color: #292d3a;
+  font-family: 'calibri', Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  scrollbar-color: #9aa3b5 transparent;
+}
+.readme-embed h1,
+.readme-embed h2,
+.readme-embed h3,
+.readme-embed h4,
+.readme-embed h5,
+.readme-embed h6 {
+  margin: 0.9em 0 0.4em;
+  color: #1d2332;
+  font-family: 'Futura', 'calibri', sans-serif;
+  line-height: 1.2;
+}
+.readme-embed h1:first-child,
+.readme-embed h2:first-child,
+.readme-embed h3:first-child {
+  margin-top: 0;
+}
+.readme-embed p {
+  margin: 0 0 12px;
+  color: #3b4050;
+}
+.readme-embed ul,
+.readme-embed ol {
+  margin: 0 0 14px;
+  padding-left: 24px;
+}
+.readme-embed li {
+  margin: 4px 0;
+  color: #3b4050;
+}
+.readme-embed strong {
+  color: #252a38;
+}
+.readme-embed em {
+  color: #565d70;
+}
+.readme-embed code {
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: #e4e8f1;
+  color: #34446f;
+  font-family: 'VCR OSD Mono', monospace;
+  font-size: 0.82em;
+}
+.readme-embed pre {
+  overflow-x: auto;
+  margin: 12px 0;
+  padding: 12px;
+  border-radius: 8px;
+  background: #202432;
+  color: #e6ebf7;
+  font-family: 'VCR OSD Mono', monospace;
+  font-size: 10px;
+  line-height: 1.3;
+  white-space: pre;
+}
+.readme-embed pre code {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+}
+.readme-embed a {
+  color: #344f9b;
+  text-shadow: none;
+  text-decoration: underline;
+}
+.readme-embed a:hover {
+  color: #202f65;
+}
+.readme-error {
+  color: #862d2d !important;
 }
 .help {
   margin-bottom: 10px;

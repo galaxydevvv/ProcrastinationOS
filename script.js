@@ -2,6 +2,60 @@
 setInterval(function () {
   document.querySelector("#timeElement").innerHTML = new Date().toLocaleString();
 }, 1000);
+// temperature
+function getWeatherEmoji(weatherCode) {
+  if (weatherCode === 0) {
+    return "☀️";
+  }
+  if (weatherCode === 1) {
+    return "🌤️";
+  }
+  if (weatherCode === 2) {
+    return "🌥️";
+  }
+  if (weatherCode === 3) {
+    return "☁️";
+  }
+  if ([45, 48].includes(weatherCode)) {
+    return "🌫️";
+  }
+  if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(weatherCode)) {
+    return "🌧️";
+  }
+  if ([71, 73, 75, 77, 85, 86].includes(weatherCode)) {
+    return "❄️";
+  }
+  if ([95, 96, 99].includes(weatherCode)) {
+    return "⛈️";
+  }
+  return "🌡️";
+}
+
+navigator.geolocation.getCurrentPosition(async (position) => {
+  const temperatureElement = document.getElementById("temperature");
+  const lat = position.coords.latitude;
+  const lon = position.coords.longitude;
+
+  try {
+    const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+    if (!response.ok) {
+      throw new Error(`Weather request failed with status ${response.status}`);
+    }
+
+    const data = await response.json(); 
+    const celsius = data.current_weather.temperature;
+    const fahrenheit = (celsius * 9) / 5 + 32;
+    const weatherEmoji = getWeatherEmoji(data.current_weather.weathercode);
+
+    temperatureElement.textContent = `${weatherEmoji} ${Math.round(fahrenheit)}°F`;
+  } catch (error) {
+    console.error("Unable to load weather:", error);
+    temperatureElement.textContent = "🌡️ Weather unavailable";
+  }
+}, () => {
+  const temperatureElement = document.getElementById("temperature");
+  temperatureElement.textContent = "🌡️ Weather unavailable";
+});
 // page switching
 let current = 0;
 function changePage(direction) {
@@ -29,6 +83,175 @@ function updateNavigation() {
     nextButton.disabled = current === document.querySelectorAll('#window .page').length - 1;
   }
 }
+
+function appendMarkdownInline(parent, text) {
+  const tokenPattern = /(```[^`]+```|`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*|\[[^\]]+\]\([^)]+\))/g;
+  let lastIndex = 0;
+
+  for (const match of text.matchAll(tokenPattern)) {
+    parent.append(document.createTextNode(text.slice(lastIndex, match.index)));
+    const token = match[0];
+
+    if (token.startsWith("```") && token.endsWith("```")) {
+      const code = document.createElement("code");
+      code.textContent = token.slice(3, -3);
+      parent.append(code);
+    } else if (token.startsWith("`")) {
+      const code = document.createElement("code");
+      code.textContent = token.slice(1, -1);
+      parent.append(code);
+    } else if (token.startsWith("**")) {
+      const strong = document.createElement("strong");
+      strong.textContent = token.slice(2, -2);
+      parent.append(strong);
+    } else if (token.startsWith("*")) {
+      const emphasis = document.createElement("em");
+      emphasis.textContent = token.slice(1, -1);
+      parent.append(emphasis);
+    } else {
+      const linkMatch = token.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+      if (!linkMatch) {
+        parent.append(document.createTextNode(token));
+      } else {
+        const link = document.createElement("a");
+        link.textContent = linkMatch[1];
+        const href = linkMatch[2];
+        const protocol = new URL(href, window.location.href).protocol;
+        if (["http:", "https:", "mailto:"].includes(protocol)) {
+          link.href = href;
+          parent.append(link);
+        } else {
+          parent.append(document.createTextNode(linkMatch[1]));
+        }
+      }
+    }
+
+    lastIndex = match.index + token.length;
+  }
+
+  parent.append(document.createTextNode(text.slice(lastIndex)));
+}
+
+function renderMarkdown(markdown, container) {
+  const lines = markdown.replace(/\r\n?/g, "\n").split("\n");
+  let index = 0;
+
+  function isBlockStart(line) {
+    return /^```|^#{1,6}\s|^\s*[-*+]\s|^\s*\d+\.\s|^\s*-{3,}\s*$/.test(line);
+  }
+
+  while (index < lines.length) {
+    const line = lines[index];
+
+    if (!line.trim()) {
+      index += 1;
+      continue;
+    }
+
+    const inlineCodeFence = line.match(/^```([^`]+)```(.*)$/);
+    if (inlineCodeFence) {
+      const paragraph = document.createElement("p");
+      const code = document.createElement("code");
+      code.textContent = inlineCodeFence[1];
+      paragraph.append(code);
+      paragraph.append(document.createTextNode(inlineCodeFence[2]));
+      container.append(paragraph);
+      index += 1;
+      continue;
+    }
+
+    if (/^```/.test(line)) {
+      index += 1;
+      const codeLines = [];
+      while (index < lines.length && !/^```/.test(lines[index])) {
+        codeLines.push(lines[index]);
+        index += 1;
+      }
+      if (index < lines.length) {
+        index += 1;
+      }
+
+      const pre = document.createElement("pre");
+      const code = document.createElement("code");
+      code.textContent = codeLines.join("\n");
+      pre.append(code);
+      container.append(pre);
+      continue;
+    }
+
+    const headingMatch = line.match(/^(#{1,6})\s+(.+)$/);
+    if (headingMatch) {
+      const heading = document.createElement(`h${headingMatch[1].length}`);
+      appendMarkdownInline(heading, headingMatch[2]);
+      container.append(heading);
+      index += 1;
+      continue;
+    }
+
+    if (/^\s*-{3,}\s*$/.test(line)) {
+      container.append(document.createElement("hr"));
+      index += 1;
+      continue;
+    }
+
+    const listMatch = line.match(/^\s*([-*+]|\d+\.)\s+(.+)$/);
+    if (listMatch) {
+      const list = document.createElement(/^\d/.test(listMatch[1]) ? "ol" : "ul");
+      while (index < lines.length) {
+        const itemMatch = lines[index].match(/^\s*([-*+]|\d+\.)\s+(.+)$/);
+        if (!itemMatch || /^\d/.test(itemMatch[1]) !== (list.tagName === "OL")) {
+          break;
+        }
+        const item = document.createElement("li");
+        appendMarkdownInline(item, itemMatch[2]);
+        list.append(item);
+        index += 1;
+      }
+      container.append(list);
+      continue;
+    }
+
+    const paragraphLines = [line.trim()];
+    index += 1;
+    while (index < lines.length && lines[index].trim() && !isBlockStart(lines[index])) {
+      paragraphLines.push(lines[index].trim());
+      index += 1;
+    }
+    const paragraph = document.createElement("p");
+    appendMarkdownInline(paragraph, paragraphLines.join(" "));
+    container.append(paragraph);
+  }
+}
+
+async function loadReadme() {
+  const readmeContent = document.getElementById("readmeContent");
+  if (!readmeContent) {
+    return;
+  }
+
+  try {
+    const response = await fetch("README.md");
+    if (!response.ok) {
+      throw new Error(`README request failed with status ${response.status}`);
+    }
+
+    readmeContent.replaceChildren();
+    renderMarkdown(await response.text(), readmeContent);
+    readmeContent.setAttribute("aria-busy", "false");
+  } catch (error) {
+    console.error("Unable to load README.md:", error);
+    readmeContent.replaceChildren();
+    const message = document.createElement("p");
+    message.className = "readme-error";
+    message.textContent = "The README could not be loaded. Open README.md to read it instead.";
+    const link = document.createElement("a");
+    link.href = "README.md";
+    link.textContent = "Open README.md";
+    readmeContent.append(message, link);
+    readmeContent.setAttribute("aria-busy", "false");
+  }
+}
+
 // close & open onboarding window
 let highestWindowLayer = 1;
 
@@ -41,7 +264,7 @@ function bringToFront(element) {
   element.style.zIndex = highestWindowLayer;
 }
 
-document.querySelectorAll("#window, #noteswindow, #gdevwindow, #gdevcopywindow").forEach((windowElement) => {
+document.querySelectorAll("#window, #noteswindow, #gdevwindow, #gdevcopywindow, #googlewindow, #aiwindow").forEach((windowElement) => {
   windowElement.addEventListener("pointerdown", () => bringToFront(windowElement));
 });
 
@@ -53,7 +276,7 @@ function startOnboarding() {
   const pages = document.querySelectorAll('#window .page');
 
   bringToFront(onboardingWindow);
-  document.getElementById("window").style.display = "";
+  document.getElementById("window").style.display = "block";
   document.getElementById("window").style.top = "50%";
   document.getElementById("window").style.left = "50%";
   document.getElementById("window").style.transform = "translate(-50%, -50%)";
@@ -66,41 +289,44 @@ function startOnboarding() {
   current = 0;
   updateNavigation();
 }
-// onboarding window dragging
-dragElement(document.getElementById("window"));
+// Window dragging
 function dragElement(element) {
-  var initialX = 0;
-  var initialY = 0;
-  var currentX = 0;
-  var currentY = 0;
-  if (document.getElementById(element.id + "header")) {
-    document.getElementById(element.id + "header").onmousedown = startDragging;
-  } else {
-    element.onmousedown = startDragging;
+  if (!element) {
+    return;
   }
-  function startDragging(e) {
-    e = e || window.event;
-    e.preventDefault();
-    initialX = e.clientX;
-    initialY = e.clientY;
-    document.onmouseup = stopDragging;
-    document.onmousemove = dragElement;
+
+  const header = document.getElementById(`${element.id}header`) || element;
+  let startX = 0;
+  let startY = 0;
+
+  header.addEventListener("mousedown", startDragging);
+
+  function startDragging(event) {
+    if (event.target.closest("button, a, iframe, .resize-handle")) {
+      return;
+    }
+
+    event.preventDefault();
+    bringToFront(element);
+    startX = event.clientX;
+    startY = event.clientY;
+    document.addEventListener("mousemove", moveWindow);
+    document.addEventListener("mouseup", stopDragging, { once: true });
   }
-  function dragElement(e) {
-    e = e || window.event;
-    e.preventDefault();
-    currentX = initialX - e.clientX;
-    currentY = initialY - e.clientY;
-    initialX = e.clientX;
-    initialY = e.clientY;
-    element.style.top = (element.offsetTop - currentY) + "px";
-    element.style.left = (element.offsetLeft - currentX) + "px";
+
+  function moveWindow(event) {
+    element.style.left = `${element.offsetLeft + event.clientX - startX}px`;
+    element.style.top = `${element.offsetTop + event.clientY - startY}px`;
+    startX = event.clientX;
+    startY = event.clientY;
   }
+
   function stopDragging() {
-    document.onmouseup = null;
-    document.onmousemove = null;
+    document.removeEventListener("mousemove", moveWindow);
   }
 }
+
+dragElement(document.getElementById("window"));
 // easter egg
 let clickCount = 0;
 const button = document.getElementById('beatle!');
@@ -152,43 +378,12 @@ function handleIconKeydown(event, element) {
     handleIconTap(element);
   }
 }
-// notes window dragging
+
 dragElement(document.getElementById("noteswindow"));
-function dragElement(element) {
-  var initialX = 0;
-  var initialY = 0;
-  var currentX = 0;
-  var currentY = 0;
-  if (document.getElementById(element.id + "header")) {
-    document.getElementById(element.id + "header").onmousedown = startDragging;
-  } else {
-    element.onmousedown = startDragging;
-  }
-  function startDragging(e) {
-    e = e || window.event;
-    e.preventDefault();
-    initialX = e.clientX;
-    initialY = e.clientY;
-    document.onmouseup = stopDragging;
-    document.onmousemove = dragElement;
-  }
-  function dragElement(e) {
-    e = e || window.event;
-    e.preventDefault();
-    currentX = initialX - e.clientX;
-    currentY = initialY - e.clientY;
-    initialX = e.clientX;
-    initialY = e.clientY;
-    element.style.top = (element.offsetTop - currentY) + "px";
-    element.style.left = (element.offsetLeft - currentX) + "px";
-  }
-  function stopDragging() {
-    document.onmouseup = null;
-    document.onmousemove = null;
-  }
-}
-  dragElement(document.getElementById("gdevwindow"));
+dragElement(document.getElementById("gdevwindow"));
 dragElement(document.getElementById("gdevcopywindow"));
+dragElement(document.getElementById("googlewindow"));
+dragElement(document.getElementById("aiwindow"));
 // close & open notes window
 function closenotes() {
   document.getElementById("noteswindow").style.display = "none";
@@ -197,7 +392,7 @@ function openNotes() {
   const onboardingWindow = document.getElementById("noteswindow");
 
   bringToFront(onboardingWindow);
-  onboardingWindow.style.display = "";
+  onboardingWindow.style.display = "block";
   onboardingWindow.style.top = "50%";
   onboardingWindow.style.left = "50%";
   onboardingWindow.style.transform = "translate(-50%, -50%)";
@@ -220,7 +415,7 @@ function openGdev() {
   const gdevWindow = document.getElementById("gdevwindow");
 
   bringToFront(gdevWindow);
-  gdevWindow.style.display = "";
+  gdevWindow.style.display = "block";
   gdevWindow.style.top = "50%";
   gdevWindow.style.left = "50%";
   gdevWindow.style.transform = "translate(-50%, -50%)";
@@ -234,11 +429,188 @@ function openGdevCopy() {
   const gdevCopyWindow = document.getElementById("gdevcopywindow");
 
   bringToFront(gdevCopyWindow);
-  gdevCopyWindow.style.display = "";
+  gdevCopyWindow.style.display = "block";
   gdevCopyWindow.style.top = "calc(50% + 30px)";
   gdevCopyWindow.style.left = "calc(50% + 30px)";
   gdevCopyWindow.style.transform = "translate(-50%, -50%)";
 }
+
+function closeGoogle() {
+  document.getElementById("googlewindow").style.display = "none";
+}
+
+function openGoogle() {
+  const googleWindow = document.getElementById("googlewindow");
+
+  if (!googleWindow) {
+    return;
+  }
+
+  bringToFront(googleWindow);
+  googleWindow.style.display = "block";
+  googleWindow.style.top = "calc(50% + 30px)";
+  googleWindow.style.left = "calc(50% + 30px)";
+  googleWindow.style.transform = "translate(-50%, -50%)";
+}
+
+function closeAI() {
+  document.getElementById("aiwindow").style.display = "none";
+}
+
+function openAI() {
+  const assistantWindow = document.getElementById("aiwindow");
+  bringToFront(assistantWindow);
+  assistantWindow.style.display = "block";
+  assistantWindow.style.top = "50%";
+  assistantWindow.style.left = "50%";
+  assistantWindow.style.transform = "translate(-50%, -50%)";
+}
+
+const browserShell = document.getElementById("browserShell");
+const browserAddressInput = document.getElementById("browserAddress");
+const browserAddressForm = document.getElementById("browserAddressForm");
+const browserHomeForm = document.getElementById("browserHomeForm");
+const browserHomeSearch = document.getElementById("browserHomeSearch");
+const browserResults = document.getElementById("browserResults");
+const browserProgress = document.getElementById("browserProgress");
+const browserProgressFill = document.getElementById("browserProgressFill");
+const browserBackButton = document.getElementById("browserBack");
+const browserForwardButton = document.getElementById("browserForward");
+const browserReloadButton = document.getElementById("browserReload");
+const browserHistory = [{ home: true, address: "" }];
+let browserHistoryIndex = 0;
+let browserProgressValue = 0;
+let browserProgressInterval = null;
+let browserProgressTimeout = null;
+let browserProgressFallback = null;
+
+function updateBrowserNavigationButtons() {
+  browserBackButton.disabled = browserHistoryIndex <= 0;
+  browserForwardButton.disabled = browserHistoryIndex >= browserHistory.length - 1;
+  browserReloadButton.disabled = browserHistory[browserHistoryIndex].home;
+}
+
+function startBrowserLoading() {
+  clearInterval(browserProgressInterval);
+  clearTimeout(browserProgressTimeout);
+  clearTimeout(browserProgressFallback);
+  browserProgressValue = 8;
+  browserProgress.classList.add("is-loading");
+  browserProgressFill.style.width = `${browserProgressValue}%`;
+  browserProgressInterval = setInterval(() => {
+    browserProgressValue = Math.min(90, browserProgressValue + Math.max(1, (90 - browserProgressValue) * 0.12));
+    browserProgressFill.style.width = `${browserProgressValue}%`;
+  }, 120);
+  browserProgressFallback = setTimeout(finishBrowserLoading, 15000);
+}
+
+function finishBrowserLoading() {
+  if (!browserProgress.classList.contains("is-loading")) {
+    return;
+  }
+
+  clearInterval(browserProgressInterval);
+  clearTimeout(browserProgressFallback);
+  browserProgressFill.style.width = "100%";
+  browserProgressTimeout = setTimeout(() => {
+    browserProgress.classList.remove("is-loading");
+    browserProgressFill.style.width = "0";
+  }, 180);
+}
+
+function createBrowserDestination(value) {
+  const address = value.trim();
+  if (!address) {
+    return null;
+  }
+
+  try {
+    if (/^https?:\/\//i.test(address)) {
+      const url = new URL(address);
+      return { url: url.href, address: url.href, search: false };
+    }
+
+    if (!/\s/.test(address) && /^[\w.-]+\.[a-z]{2,}(?::\d+)?(?:\/.*)?$/i.test(address)) {
+      const url = new URL(`https://${address}`);
+      return { url: url.href, address: url.href, search: false };
+    }
+  } catch (error) {
+    // Treat malformed addresses as search terms.
+  }
+
+  const url = new URL("https://mojeek.com");
+  url.searchParams.set("q", address);
+  url.searchParams.set("ved", "1t:244952");
+  return { url: url.href, address, query: address, search: true };
+}
+
+function showBrowserHistoryEntry(index) {
+  browserHistoryIndex = index;
+  const entry = browserHistory[browserHistoryIndex];
+  browserAddressInput.value = entry.query || entry.address;
+
+  if (entry.home) {
+    browserShell.classList.remove("is-results");
+  } else {
+    browserShell.classList.add("is-results");
+    startBrowserLoading();
+    if (entry.search) {
+      browserAddressForm.submit();
+    } else {
+      browserResults.src = entry.url;
+    }
+  }
+
+  updateBrowserNavigationButtons();
+}
+
+function navigateBrowser(value) {
+  const destination = createBrowserDestination(value);
+  if (!destination) {
+    return;
+  }
+
+  browserHistory.splice(browserHistoryIndex + 1);
+  browserHistory.push({ ...destination, home: false });
+  showBrowserHistoryEntry(browserHistory.length - 1);
+}
+
+browserAddressForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  navigateBrowser(browserAddressInput.value);
+});
+
+browserHomeForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  navigateBrowser(browserHomeSearch.value);
+});
+
+browserBackButton.addEventListener("click", () => {
+  if (browserHistoryIndex > 0) {
+    showBrowserHistoryEntry(browserHistoryIndex - 1);
+  }
+});
+
+browserForwardButton.addEventListener("click", () => {
+  if (browserHistoryIndex < browserHistory.length - 1) {
+    showBrowserHistoryEntry(browserHistoryIndex + 1);
+  }
+});
+
+browserReloadButton.addEventListener("click", () => {
+  const entry = browserHistory[browserHistoryIndex];
+  if (!entry.home) {
+    startBrowserLoading();
+    if (entry.search) {
+      browserAddressForm.submit();
+    } else {
+      browserResults.src = entry.url;
+    }
+  }
+});
+
+browserResults.addEventListener("load", finishBrowserLoading);
+updateBrowserNavigationButtons();
 
 function createNoteId() {
   if (window.crypto && typeof window.crypto.randomUUID === "function") {
@@ -419,6 +791,7 @@ if (noteTextInput) {
 }
 
 updateNavigation();
+loadReadme();
 
 const notesContent = document.querySelector("#noteswindow .onboarding");
 const notesWindow = document.getElementById("noteswindow");
@@ -426,6 +799,10 @@ const gdevContent = document.querySelector("#gdevwindow .gdev-content");
 const gdevWindow = document.getElementById("gdevwindow");
 const gdevCopyContent = document.querySelector("#gdevcopywindow .gdev-content");
 const gdevCopyWindow = document.getElementById("gdevcopywindow");
+const googleContent = document.querySelector("#googlewindow .gdev-content");
+const googleWindow = document.getElementById("googlewindow");
+const aiContent = document.querySelector("#aiwindow .gdev-content");
+const aiWindow = document.getElementById("aiwindow");
 
 if (notesContent && notesWindow && "ResizeObserver" in window) {
   const notesResizeObserver = new ResizeObserver(() => {
@@ -449,6 +826,22 @@ if (gdevCopyContent && gdevCopyWindow && "ResizeObserver" in window) {
   });
 
   gdevCopyResizeObserver.observe(gdevCopyContent);
+}
+
+if (googleContent && googleWindow && "ResizeObserver" in window) {
+  const googleResizeObserver = new ResizeObserver(() => {
+    googleWindow.style.width = `${googleContent.offsetWidth}px`;
+  });
+
+  googleResizeObserver.observe(googleContent);
+}
+
+if (aiContent && aiWindow && "ResizeObserver" in window) {
+  const aiResizeObserver = new ResizeObserver(() => {
+    aiWindow.style.width = `${aiContent.offsetWidth}px`;
+  });
+
+  aiResizeObserver.observe(aiContent);
 }
 
 function startNotesResize(event, axis) {
