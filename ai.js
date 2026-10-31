@@ -31,7 +31,7 @@ function resetConversation() {
   addMessage("assistant", "Hello! I am a front-end powered AI. How can I help?");
   chatStatus.textContent = proxyUrl && apiKey
     ? "Ready to chat with Hack Club AI."
-    : "Set your Cloudflare Worker URL and Hack Club AI API key to start chatting.";
+    : "Set your Cloudflare Worker URL and AI API key to start chatting.";
 }
 
 function loadProxyUrl() {
@@ -39,8 +39,8 @@ function loadProxyUrl() {
     proxyUrl = localStorage.getItem("hackClubAiProxyUrl") || "";
     proxyUrlInput.value = proxyUrl;
     chatStatus.textContent = proxyUrl && apiKey
-      ? "Ready to chat with Hack Club AI."
-      : "Set your Cloudflare Worker URL and Hack Club AI API key to start chatting.";
+      ? "Ready to chat with AI."
+      : "Set your Cloudflare Worker URL and AI API key to start chatting.";
   } catch (error) {
     console.error("Could not load the saved Worker URL:", error);
     chatStatus.textContent = "Could not load the saved Worker URL. Enter it again to continue.";
@@ -88,8 +88,8 @@ function setApiKey() {
   apiKey = apiKeyInput.value.trim();
   apiKeyInput.value = "";
   chatStatus.textContent = apiKey
-    ? (proxyUrl ? "Ready to chat with Hack Club AI." : "API key set for this page session only.")
-    : "Enter your Hack Club AI API key to start chatting.";
+    ? (proxyUrl ? "Ready to chat with AI." : "API key set for this page session only.")
+    : "Enter your AI API key to start chatting.";
   if (proxyUrl && apiKey) {
     chatSettings.hidden = true;
     settingsToggle.setAttribute("aria-expanded", "false");
@@ -123,7 +123,7 @@ async function sendMessage(messageText) {
     if (!response.ok) {
       const errorBody = await response.json().catch(() => null);
       const detail = errorBody?.error?.message;
-      throw new Error(detail || `Chat request failed (${response.status}). Check your Worker URL and Hack Club AI API key.`);
+      throw new Error(detail || `Chat request failed (${response.status}). Check your Worker URL and AI API key.`);
     }
 
     const result = await response.json();
@@ -187,7 +187,7 @@ chatForm.addEventListener("submit", (event) => {
     chatSettings.hidden = false;
     settingsToggle.setAttribute("aria-expanded", "true");
     apiKeyInput.focus();
-    chatStatus.textContent = "Enter your Hack Club AI API key to send a message.";
+    chatStatus.textContent = "Enter your AI API key to send a message.";
     return;
   }
   if (!proxyUrl) {
