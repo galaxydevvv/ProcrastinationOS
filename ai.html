@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
+    <title>General Assistant</title>
+    <link rel="stylesheet" href="ai.css">
+    <script src="ai.js" defer></script>
+</head>
+<body>
+    <main class="chat-app">
+        <header class="chat-header">
+            <h1 class="chat-title">General Assistant</h1>
+            <div class="chat-header-actions">
+                <button id="settingsToggle" type="button" aria-expanded="false" aria-controls="chatSettings">API key</button>
+                <button id="clearChat" type="button">New chat</button>
+            </div>
+        </header>
+        <section class="chat-settings" id="chatSettings" hidden>
+            <label for="proxyUrl">Cloudflare Worker chat URL</label>
+            <div class="chat-key-row">
+                <input id="proxyUrl" type="url" autocomplete="url" spellcheck="false"
+                    placeholder="https://your-worker.workers.dev/chat">
+                <button id="saveProxyUrl" type="button">Save URL</button>
+            </div>
+            <label for="apiKey">Hack Club AI API key</label>
+            <div class="chat-key-row">
+                <input id="apiKey" type="password" autocomplete="off" spellcheck="false"
+                    placeholder="Paste your API key">
+                <button id="saveApiKey" type="button">Use key</button>
+            </div>
+            <p>Your Worker URL is saved in this browser. Your API key stays in memory for this page session and is sent through your Worker to Hack Club AI; it is not saved. <a href="https://ai.hackclub.com/dashboard" target="_blank" rel="noopener noreferrer">Get a Hack Club AI key</a>.</p>
+        </section>
+        <section class="chat-messages" id="chatMessages" aria-label="Conversation" aria-live="polite"></section>
+        <p class="chat-status" id="chatStatus" role="status">Add your API key to start chatting.</p>
+        <form class="chat-composer" id="chatForm">
+            <textarea id="chatInput" rows="1" aria-label="Message"
+                placeholder="Message General Assistant..." required></textarea>
+            <button class="chat-send" id="sendButton" type="submit">Send</button>
+        </form>
+    </main>
+</body>
+</html>
